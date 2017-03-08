@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>最美的声音</title>
+	<meta charset="utf-8" />
+    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+    <meta name="keywords" content="">
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="email=no" name="format-detection">
+
+    <script type="text/javascript" src="js/lib/jquery.mobile.min.js"></script>
+    <script type="text/javascript" src="js/lib/jquery.slideunlock.min.js"></script>
+
+    <!-- swiper动画 -->
+    <script src="js/lib/swiper.animate1.0.2.min.js"></script>
+    <link href="js/lib/animate.min.css" rel="stylesheet" />
+    <!-- 自定义样式 -->
+    <link href="style/main.min.css" rel="stylesheet" />
+    <script data-main="js/app.js" src="js/require.js"></script>
+</head>
+<body>
+    <div class="block">请使用竖屏访问本页面</div>
+
+    <div class="preload"></div>
+
+    <div class="loading">
+        <div class="letter-up"><img src="img/loading/letter-title-up.png" /></div>
+        <div class="words"><img src="img/loading/words.png" /></div>
+        <div class="ticket"><img src="img/loading/ticket.png" /></div>
+        <div class="body">
+            
+            <div class="letter-down"><img src="img/loading/letter-title-down.png" /></div>
+            <div class="logo1 jsfix"></div>
+            <div class="logo2 jsfix"></div>
+            <div class="percent jsfix">111</div>
+            <div class="ready">
+                <img src="img/loading/fingerprint.png" class="finger" />
+                <img src="img/loading/words2.png" class="words" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Swiper -->
+    <div class="swiper-container" id="airport">
+
+        <div class="swiper-wrapper">
+            <div class="swiper-slide swiper-no-swiping airport jsfixChild">
+                <div class="ani open" swiper-animate-effect="fadeInUp" swiper-animate-duration="1s" swiper-animate-delay="0s"></div>
+                <div class="ani walk" swiper-animate-effect="fadeInUp" swiper-animate-duration="1s" swiper-animate-delay="3s"></div>
+                <div class="ani wait" swiper-animate-effect="fadeInUp" swiper-animate-duration="1s" swiper-animate-delay="6s"></div>
+                <div class="ani fly" swiper-animate-effect="fadeInUp" swiper-animate-duration="1s" swiper-animate-delay="9s"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="swiper-container" id="scene">
+
+        <div class="swiper-wrapper">
+            <div id="slide-wrapper">
+                <input type="hidden" value="" id="lockable">
+                <div id="slider">
+                    <span id="label"><img src="img/scene/slider/button-1.png" /></span>
+                    <span id="lableTip">滑动继续旅行</span>
+                </div>
+            </div>
+
+            <div class="error jsfix"></div>
+
+            <div class="ready">
+
+            </div>
+
+            <div class="disc">
+                <div class="main">
+                    <div class="left"></div>
+                    <div class="right"></div>
+                    <div class="body"><img src="img/scene/disc.png" class="circle" /><img src="img/scene/finger.png" class="finger" /></div>
+                </div>
+            </div>
+
+            <!-- 日本 -->
+            <div class="swiper-slide swiper-no-swiping japan">
+                <div class="bg-shadow"></div>
+                <div class="bg jsfixChild">
+                    <div class="flower"></div>
+                    <div class="product"></div>
+                </div>
+                <div class="ready"><img src="img/ready/4.png" /></div>
+                <div class="timer"><span>20</span>s</div>
+                <div class="ani answer" swiper-animate-effect="fadeIn" swiper-animate-duration="1s" swiper-animate-delay="0.5s">
+                    <img src="img/japan/button-china.png" />
+                    <img src="img/japan/button-japan.png" />
+                    <img src="img/japan/button-korea.png" />
+                </div>
+            </div>
+            <div class="swiper-slide swiper-no-swiping japan-result"></div>
+
+            <!-- 日内瓦 -->
+            <div class="swiper-slide swiper-no-swiping geneva">
+                <div class="bg-shadow"></div>
+                <div class="bg jsfixChild">
+                    <div class="swan" data-mode="bottom-left"></div>
+                    <div class="boat"></div>
+                    <div class="skiing"></div>
+                    <div class="product"></div>
+                </div>
+                <!--<div class="cover"></div>-->
+                <div class="timer"><span>20</span>s</div>
+                <div class="ani answer" swiper-animate-effect="fadeIn" swiper-animate-duration="1s" swiper-animate-delay="0.5s">
+                    <img src="img/geneva/button-geneva.png" />
+                    <img src="img/geneva/button-germany.png" />
+                    <img src="img/geneva/button-sweden.png" />
+                </div>
+            </div>
+            <div class="swiper-slide swiper-no-swiping geneva-result"></div>
+
+            <!-- 亚马逊 -->
+            <div class="swiper-slide swiper-no-swiping amazon">
+                <div class="bg-shadow"></div>
+                <div class="bg jsfixChild">
+                    <div class="bird1"></div>
+                    <div class="bird2"></div>
+                    <div class="water"></div>
+                    <div class="boat"></div>
+                    <div class="monkey"></div>
+                    <div class="product jsfix"></div>
+                </div>
+                <!--<div class="cover"></div>-->
+                <div class="timer"><span>20</span>s</div>
+                <div class="ani answer" swiper-animate-effect="fadeIn" swiper-animate-duration="1s" swiper-animate-delay="0.5s">
+                    <img src="img/amazon/button-amazon.png" />
+                    <img src="img/amazon/button-india.png" />
+                    <img src="img/amazon/button-madagascar.png" />
+                </div>
+            </div>
+            <div class="swiper-slide swiper-no-swiping amazon-result"></div>
+
+            <!-- 美国 -->
+            <div class="swiper-slide swiper-no-swiping moon">
+                <div class="bg-shadow"></div>
+                <div class="bg jsfixChild">
+                    <div class="earth"></div>
+                    <div class="man animate-bounce-down"></div>
+                    <div class="product"></div>
+                </div>
+                <!--<div class="cover"></div>-->
+                <div class="timer"><span>20</span>s</div>
+                <div class="ani answer" swiper-animate-effect="fadeIn" swiper-animate-duration="1s" swiper-animate-delay="0.5s">
+                    <img src="img/moon/button-america.png" />
+                    <img src="img/moon/button-china.png" />
+                    <img src="img/moon/button-russia.png" />
+                </div>
+            </div>
+            <div class="swiper-slide swiper-no-swiping moon-result"></div>
+
+            <!-- 埃及 -->
+            <div class="swiper-slide swiper-no-swiping egypt">
+                <div class="bg-shadow"></div>
+                <div class="bg jsfixChild">
+                    <div class="camel"></div>
+                    <div class="fg"></div>
+                    <div class="product"></div>
+                    <div class="grass"></div>
+                    <div class="product-press"></div>
+                </div>
+                <!--<div class="cover"></div>-->
+                <div class="timer"><span>20</span>s</div>
+                <div class="ani answer" swiper-animate-effect="fadeIn" swiper-animate-duration="1s" swiper-animate-delay="0.5s">
+                    <img src="img/egypt/button-austria.png" />
+                    <img src="img/egypt/button-egypt.png" />
+                    <img src="img/egypt/button-mongolia.png" />
+                </div>
+            </div>
+            <div class="swiper-slide swiper-no-swiping egypt-result"></div>
+
+            <!-- 新加坡 -->
+            <div class="swiper-slide swiper-no-swiping singapore">
+                <div class="bg-shadow"></div>
+                <div class="bg jsfixChild">
+                    <div class="balloon1"></div>
+                    <div class="balloon2"></div>
+                    <div class="balloon3"></div>
+                    
+                    <div class="fountain"></div>
+                    <div class="ship">
+                        <div class="hull jsfix"></div>
+                        <div class="water jsfix"></div>
+                    </div>
+                    <div class="product"></div>
+                </div>
+                <!--<div class="cover"></div>-->
+                <div class="timer"><span>20</span>s</div>
+                <div class="ani answer" swiper-animate-effect="fadeIn" swiper-animate-duration="1s" swiper-animate-delay="0.5s">
+                    <img src="img/singapore/button-malaysia.png" />
+                    <img src="img/singapore/button-philippines.png" />
+                    <img src="img/singapore/button-singapore.png" />
+                </div>
+            </div>
+            <div class="swiper-slide swiper-no-swiping singapore-result"></div>
+
+            <div class="swiper-slide swiper-no-swiping">
+                <div class="over"><img src="img/scene/over.jpg" /></div>
+            </div>
+            <div class="swiper-slide swiper-no-swiping result">
+                <div class="score"><span>0</span><sub>S</sub></div>
+                <div class="rank">击败了<span>0%</span>的人</div>
+                <!--<div class="description"><img src="img/score/description.png" /></div>-->
+                <div class="retry"><img src="img/score/retry.png" /></div>
+                <div class="share"><img src="img/score/share.png" /></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
