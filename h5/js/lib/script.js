@@ -667,7 +667,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
             open: function () {
                 console.log('进入日内瓦')
                 createjs.Sound.stop();
-                createjs.Sound.play("scene-geneva");
+                createjs.Sound.play("scene-geneva", { loop: -1 });
                 self.slider.reset();
                 self.slideFlag = false;
 
@@ -780,7 +780,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
             open: function () {
                 console.log('进入亚马逊')
                 createjs.Sound.stop();
-                createjs.Sound.play("scene-amazon");
+                createjs.Sound.play("scene-amazon", { loop: -1 });
                 self.slider.reset();
                 self.slideFlag = false;
 
@@ -903,7 +903,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
             open: function () {
                 console.log('进入月球')
                 createjs.Sound.stop();
-                createjs.Sound.play("scene-moon");
+                createjs.Sound.play("scene-moon", { loop: -1 });
                 self.slider.reset();
                 self.slideFlag = false;
 
@@ -980,7 +980,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
             open: function () {
                 console.log('进入埃及')
                 createjs.Sound.stop();
-                createjs.Sound.play("scene-egypt");
+                createjs.Sound.play("scene-egypt", { loop: -1 });
                 self.slider.reset();
                 self.slideFlag = false;
 
@@ -1053,7 +1053,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
             open: function () {
                 console.log('进入新加坡')
                 createjs.Sound.stop();
-                createjs.Sound.play("scene-singapore");
+                createjs.Sound.play("scene-singapore", { loop: -1 });
                 self.slider.reset();
                 self.slideFlag = false;
 
