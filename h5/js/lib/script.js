@@ -107,9 +107,10 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                     })
                 });
 
-            }, 3000)
+            }, 300)
 
-
+            // 初始化倒计时
+            self.countdown.init();
             //self.scene.airport.open();
         }
 
@@ -228,6 +229,15 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
             self.swiper.slideTo(13);
             self.swiper.lockSwipes();
         });
+
+        $('.share').hammer().on("tap", function (e) {
+            $('.box-wrapper, .share2').show();
+        });
+
+        $('.share2').hammer().on("tap", function (e) {
+            $('.box-wrapper').hide();
+            $(this).hide();
+        });
     }
 
 
@@ -235,48 +245,144 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
 
         totalTime: 20,
         currentTime: 20,
+        score : 0,
         timer: null,
+        rightAnswer: 0,
+        scene: 0,
+        callback: null,
+        mask: true,
+        args:null,
+
+        answers : [
+            ['china', 'japan', 'korea'],
+            ['geneva', 'germany', 'sweden'],
+            ['amazon', 'india', 'madagascar'],
+            ['america', 'china', 'russia'],
+            ['austria', 'egypt', 'mongolia'],
+            ['malaysia', 'philippines', 'singapore']
+        ],
+
+        init: function (args) {
+            var _self = self.countdown;
+            _self.bindAction();
+            _self.reset();
+        },
 
         start: function (args) {
             var _self = self.countdown;
+
+            _self.scene = args.scene || 0;
+            _self.rightAnswer = args.rightAnswer || 0;
+            _self.callback = args.callback || null;
+            _self.args = args || null;
+            _self.setButton();
+
+            $('.box-wrapper, .box-wrapper > .countdown').show();
+
+            if (_self.mask) { return; }
 
             _self.timer = setInterval(function () {
                 if (_self.currentTime > 0) {
                     _self.currentTime--;
 
-                    $('.geneva .timer').text(_self.currentTime);
-                    //$(".scene1 .bg").css('opacity', (70 / totalTime * (totalTime - currentTime)) / 100);
-                    //$(".scene1 .cover").css('opacity', (40 / totalTime * currentTime) / 100);   // 0 除，最后1秒完全不可见
-
-                    // 10px 模糊半径
-                    $(".geneva .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
+                    $('.countdown .timer').text(_self.currentTime);
+                    $('.countdown .timer').css('background-position-x', $('.countdown .timer').width() * ((_self.totalTime - _self.currentTime) / _self.totalTime) * -1 + 'px')
                 }
-                else {
-                    clearInterval(_self.timer);
-                    $(".geneva .bg").css('filter', 'blur(0px)');
-                    self.finished[0] = 1;
-
-                    $('.geneva .timer').hide();
-                    $('.geneva .answer').fadeOut();
-                    self.scene.geneva.movie.play();
-
-                    //self.scenePlay($('.geneva .bg'));
+                else {                    
+                    _self.close();
                 }
             }, 1000)
+        },
+
+        // 根据场景设置按钮
+        setButton : function(){
+            var _self = self.countdown,
+                target = $('.countdown .answer img');
+
+            target.each(function (index) {
+                $(this).attr('src', 'img/countdown/button/' + _self.answers[_self.scene][index] + '.png');
+            })
+        },
+
+        // 动作绑定
+        bindAction: function () {
+            var _self = self.countdown,
+                target = $('.countdown .answer img'),
+                timer = null;
+
+            // 仅第一次出现
+            $('.countdown .tips').hammer().on("tap", function () {
+                $(this).fadeOut();
+                _self.mask = false;
+                _self.start(_self.args);
+
+                // 开始播放日本音乐
+                createjs.Sound.play("scene-japan", { loop: -1 });
+            });
+
+            target.eq(0).hammer().on("tap", function () {
+                if (_self.rightAnswer == 0) { right();  }
+                else { error(); }
+            });
+
+            target.eq(1).hammer().on("tap", function () {
+                if (_self.rightAnswer == 1) { right(); }
+                else { error(); }
+            });
+
+            target.eq(2).hammer().on("tap", function () {
+                if (_self.rightAnswer == 2) { right(); }
+                else { error(); }
+            });
+
+            function error() {
+                _self.currentTime = punish(_self.currentTime);
+                $('.countdown .timer').text(_self.currentTime);
+                $('.countdown .timer').css('background-position-x', $('.countdown .timer').width() * ((_self.totalTime - _self.currentTime) / _self.totalTime) * -1 + 'px')
+
+                clearInterval(timer);
+                $('.countdown .error').stop().css({ 'opacity': 1 }).show();
+                timer = setTimeout(function () { $('.countdown .error').fadeOut(); }, 1000);
+
+                if (_self.currentTime == 0) { _self.close(); }
+            }
+
+            function right() {
+                _self.close();
+            }
+
+            function punish(num) {
+                num -= 3;
+                if (num < 0) { num = 0; }
+                return num;
+            }
         },
 
         reset : function(){
             var _self = self.countdown;
             _self.currentTime = 20;
             _self.timer = null;
+
+            $('.countdown .timer').text(_self.totalTime);
+            $('.countdown .timer').css('background-position-x', '0%');
         },
 
-        clear: function () {
+        close: function () {
+            var _self = self.countdown;
+            clearInterval(_self.timer);
+
+            _self.score += _self.currentTime;
+            console.log(_self.currentTime);
+            
+            $('.box-wrapper, .box-wrapper > .countdown').hide();
+            $('.result .score span').text(120 - _self.score);
+            $('.result .rank span').text((parseInt((_self.score / 120) * 20) + 80) + '%');
+
+            _self.reset();
+            if (_self.callback) { _self.callback(); }
 
         }
     }
-
-    self.score = 0;
 
     self.s = 1;
 
@@ -352,7 +458,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
             open: function () {
 
                 console.log('进入日本');
-                createjs.Sound.play("scene-japan", { loop: -1 });
+                
                 //self.slider.reset();
 
                 // 第一个场景负责初始化
@@ -362,73 +468,15 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                     effect: 'fade',
                     onInit: function (swiper) {
                         swiperAnimateCache(swiper); //隐藏动画元素 
+                        swiperAnimate(swiper); //初始化完成开始动画
 
-                        $('.japan .timer').hide();
+                        self.countdown.start({ scene: 0, rightAnswer: 1, callback: function () { self.scene.japan.movie.play(); } });
+                        self.scene.japan.bindAction();
 
-
-                        var i = 3;
-
-                        var t = setInterval(function () {
-
-                            if (i == 0) {
-                                clearInterval(t);
-                                $('.japan .timer').show();
-                                $('.japan .ready').hide();
-                                $('.disc').show();
-
-                                swiperAnimate(swiper); //初始化完成开始动画
-
-                                self.scene.japan.countdown.start();
-                                self.scene.japan.bindAction();
-
-                                return null;
-                            }
-
-                            console.log(i);
-                            $('.ready img').attr('src', 'img/ready/' + i-- + '.png');
-                        }, 1000)
-
-
-                        function x() {
-                            $('.disc .left').animate({ 'background-position-x': '-100%' }, 5000, 'linear', function () {
-                                $('.disc .left').css({ 'background-position-x': '100%' });
-                                x();
-                            });
-                        }
-
-                        function y() {
-                            $('.disc .right').animate({ 'background-position-x': '200%' }, 5000, 'linear', function () {
-                                $('.disc .right').css({ 'background-position-x': '0%' });
-                                y();
-                            });
-                        }
-
-                        y();
-                        x();
-
-
-                        //var tt = setInterval(function () {
-
-                        //    var x = $('.japan .disc .left').css('background-position-x');
-
-                        //    //console.log($('.japan .disc .left').css('background-position-x'))
-                        //    //$('.japan .disc .left').css({ 'background-position-x': '100px' });
-
-                        //    $('.japan .disc .left').animate({ 'background-position-x': '0' })
-
-                        //}, 1000)
-
-
-                        //swiperAnimate(swiper); //初始化完成开始动画
-
-                        //self.scene.japan.countdown.start();
-                        //self.scene.japan.bindAction();
 
                         //swiper.lockSwipes();
 
                         //$('#scene .japan .bg').css("transform", "scale(" + $('body').width() / 320 + ")");
-
-                        //createjs.Sound.play("sound1");
 
                         //swiper.slideTo(13);
                     },
@@ -449,40 +497,12 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
 
                     }
                 });
-
-
-                function ready() {
-
-                }
             },
 
             bindAction: function () {
-                var _self = self.scene.japan.countdown;
-                var target = $('.japan .answer img');
-
-                target.eq(0).hammer().on("tap", error);
-                target.eq(2).hammer().on("tap", error);
-
-                target.eq(1).hammer().on("tap", function (e) {
-                    console.log('回答正确');
-                    $(".japan .bg").css('filter', 'blur(0px)');
-
-                    self.scene.japan.movie.play();
-                    $('.disc').hide();
-
-                    //self.scenePlay($('.japan .bg'));
-                    clearInterval(_self.timer);
-                    $('.japan .timer').fadeOut();
-                    $('.japan .answer').fadeOut();
-
-                    self.score += _self.currentTime;
-
-                    self.finished[0] = 1;
-                });
 
                 // 下个场景
                 $('.japan .product').hammer().on("tap", function (e) {
-                    if (self.finished[0]) {
 
                         self.swiper.unlockSwipes();
                         self.swiper.slideTo(1);
@@ -490,17 +510,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                         self.s = 2;
 
                         $('#slide-wrapper').show();
-                    }
                 });
-
-                //$('.japan-result').hammer().on("tap", function (e) {
-                //    if (self.finished[0]) {
-                //        self.swiper.unlockSwipes();
-                //        self.swiper.slideTo(2);
-                //        self.scene.japan.close();
-                //        self.scene.geneva.open();
-                //    }
-                //});
 
                 var flag = false;
 
@@ -605,64 +615,6 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
 
                 })
 
-                function error() {
-                    _self.currentTime = self.punish(_self.currentTime);
-                    $('.japan .timer span').text(_self.currentTime);
-                    $(".japan .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-
-                    $('#scene .error').show();
-                    setTimeout(function () { $('#scene .error').fadeOut(); }, 1000);
-
-                    if (_self.currentTime == 0) {
-                        $(".japan .bg").css('filter', 'blur(0px)');
-                        $('.japan .timer').hide();
-                        $('.japan .answer').fadeOut();
-
-                        clearInterval(_self.timer);
-                        self.scene.japan.movie.play();
-                        $('.disc').hide();
-
-                        self.finished[0] = 1;
-                    }
-                }
-            },
-
-            countdown: {
-
-                totalTime: 20,
-                currentTime: 20,
-                timer: null,
-
-                start: function () {
-                    var _self = self.scene.japan.countdown;
-
-                    $('.disc').show();
-
-                    _self.timer = setInterval(function () {
-                        if (_self.currentTime > 0) {
-                            _self.currentTime--;
-
-                            $('.japan .timer span').text(_self.currentTime);
-                            $('.japan .timer').css('background-position-x', $('.japan .timer').width() * ((20 - _self.currentTime) / 20) * -1 + 'px')
-                            //$(".scene1 .bg").css('opacity', (70 / totalTime * (totalTime - currentTime)) / 100);
-                            //$(".scene1 .cover").css('opacity', (40 / totalTime * currentTime) / 100);   // 0 除，最后1秒完全不可见
-
-                            // 10px 模糊半径
-                            $(".japan .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-                        }
-                        else {
-                            clearInterval(_self.timer);
-                            $(".japan .bg").css('filter', 'blur(0px)');
-                            self.finished[0] = 1;
-
-                            $('.japan .timer').hide();
-                            $('.japan .answer').fadeOut();
-                            self.scene.japan.movie.play();
-                            $('.disc').hide();
-                            //self.scenePlay($('.geneva .bg'));
-                        }
-                    }, 1000)
-                }
             },
 
             movie: {
@@ -679,6 +631,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 },
 
                 shark: function () {
+                    $('.japan .bg .product').addClass('shake');
                     self.scene.japan.movie.timer[0] = setInterval(function () {
                         $('.japan .bg .product').addClass('shake');
 
@@ -718,115 +671,23 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 self.slider.reset();
                 self.slideFlag = false;
 
-                self.scene.geneva.countdown.start();
+                self.countdown.start({ scene: 1, rightAnswer: 0, callback: function () { self.scene.geneva.movie.play(); } });
                 self.scene.geneva.bindAction();
             },
 
             bindAction: function () {
-                var _self = self.scene.geneva.countdown;
-                var target = $('.geneva .answer img');
-
-                target.eq(1).hammer().on("tap", error);
-                target.eq(2).hammer().on("tap", error);
-
-                target.eq(0).hammer().on("tap", function (e) {
-                    console.log('回答正确');
-                    $(".geneva .bg").css('filter', 'blur(0px)');
-                    //self.scenePlay($('.japan .bg'));
-                    self.scene.geneva.movie.play();
-                    $('.disc').hide();
-
-                    clearInterval(_self.timer);
-                    $('.geneva .timer').hide();
-                    $('.geneva .answer').fadeOut();
-
-                    self.score += _self.currentTime;
-
-                    self.finished[0] = 1;
-                });
 
                 // 下个场景
                 $('.geneva .product').hammer().on("tap", function (e) {
-                    if (self.finished[0]) {
-                        self.swiper.unlockSwipes();
-                        self.swiper.slideTo(3);
-                        self.swiper.lockSwipes();
-                        self.s = 3;
+                    self.swiper.unlockSwipes();
+                    self.swiper.slideTo(3);
+                    self.swiper.lockSwipes();
+                    self.s = 3;
 
-                        self.slider.reset();
-                        $('#slide-wrapper').show();
-                    }
+                    self.slider.reset();
+                    $('#slide-wrapper').show();
                 });
 
-                //$('.geneva-result img').hammer().on("tap", function (e) {
-
-                //    console.log('继续')
-                //    self.swiper.slideTo(4);
-                //    self.scene.geneva.close();
-                //    self.scene.amazon.open();
-
-                //});
-
-                function error() {
-                    _self.currentTime = self.punish(_self.currentTime);
-                    $('.geneva .timer span').text(_self.currentTime);
-                    $(".geneva .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-
-                    $('#scene .error').show();
-                    setTimeout(function () { $('#scene .error').fadeOut(); }, 1000);
-
-                    if (_self.currentTime == 0) {
-                        $(".geneva .bg").css('filter', 'blur(0px)');
-                        $('.geneva .timer').hide();
-                        $('.geneva .answer').fadeOut();
-
-                        clearInterval(_self.timer);
-                        //self.scenePlay($('.geneva .bg'));
-                        self.scene.geneva.movie.play();
-                        $('.disc').hide();
-
-                        self.finished[0] = 1;
-                    }
-                }
-            },
-
-            countdown: {
-
-                totalTime: 20,
-                currentTime: 20,
-                timer: null,
-
-                start: function () {
-                    var _self = self.scene.geneva.countdown;
-
-                    $('.disc').show();
-
-                    _self.timer = setInterval(function () {
-                        if (_self.currentTime > 0) {
-                            _self.currentTime--;
-
-                            $('.geneva .timer span').text(_self.currentTime);
-                            $('.geneva .timer').css('background-position-x', $('.geneva .timer').width() * ((20 - _self.currentTime) / 20) * -1 + 'px')
-                            //$(".scene1 .bg").css('opacity', (70 / totalTime * (totalTime - currentTime)) / 100);
-                            //$(".scene1 .cover").css('opacity', (40 / totalTime * currentTime) / 100);   // 0 除，最后1秒完全不可见
-
-                            // 10px 模糊半径
-                            $(".geneva .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-                        }
-                        else {
-                            clearInterval(_self.timer);
-                            $(".geneva .bg").css('filter', 'blur(0px)');
-                            self.finished[0] = 1;
-
-                            $('.geneva .timer').hide();
-                            $('.geneva .answer').fadeOut();
-                            self.scene.geneva.movie.play();
-                            $('.disc').hide();
-
-                            //self.scenePlay($('.geneva .bg'));
-                        }
-                    }, 1000)
-                }
             },
 
             movie: {
@@ -846,6 +707,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 },
 
                 shark: function () {
+                    $('.geneva .bg .product').addClass('shake');
                     self.scene.geneva.movie.timer[0] = setInterval(function () {
                         $('.geneva .bg .product').addClass('shake');
 
@@ -922,111 +784,22 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 self.slider.reset();
                 self.slideFlag = false;
 
-                self.scene.amazon.countdown.start();
+                self.countdown.start({ scene: 2, rightAnswer: 0, callback: function () { self.scene.amazon.movie.play(); } });
                 self.scene.amazon.bindAction();
             },
 
             bindAction: function () {
-                var _self = self.scene.amazon.countdown;
-                var target = $('.amazon .answer img');
-
-                target.eq(1).hammer().on("tap", error);
-                target.eq(2).hammer().on("tap", error);
-
-                target.eq(0).hammer().on("tap", function (e) {
-                    console.log('回答正确');
-                    $(".amazon .bg").css('filter', 'blur(0px)');
-                    //self.scenePlay($('.japan .bg'));
-                    self.scene.amazon.movie.play();
-                    $('.disc').hide();
-
-                    clearInterval(_self.timer);
-                    $('.amazon .timer').hide();
-                    $('.amazon .answer').fadeOut();
-
-                    self.score += _self.currentTime;
-
-                    self.finished[0] = 1;
-                });
 
                 // 下个场景
                 $('.amazon .product').hammer().on("tap", function (e) {
-                    if (self.finished[0]) {
-                        self.swiper.unlockSwipes();
-                        self.swiper.slideTo(5);
-                        self.swiper.lockSwipes();
-                        self.s = 4;
+                    self.swiper.unlockSwipes();
+                    self.swiper.slideTo(5);
+                    self.swiper.lockSwipes();
+                    self.s = 4;
 
-                        self.slider.reset();
-                        $('#slide-wrapper').show();
-                    }
+                    self.slider.reset();
+                    $('#slide-wrapper').show();
                 });
-
-                //$('.amazon-result img').hammer().on("tap", function (e) {
-                //    if (self.finished[0]) {
-                //        self.swiper.slideTo(6);
-                //        self.scene.moon.open();
-                //    }
-                //});
-
-                function error() {
-                    _self.currentTime = self.punish(_self.currentTime);
-                    $('.amazon .timer span').text(_self.currentTime);
-                    $(".amazon .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-
-                    $('#scene .error').show();
-                    setTimeout(function () { $('#scene .error').fadeOut(); }, 1000);
-
-                    if (_self.currentTime == 0) {
-                        $(".amazon .bg").css('filter', 'blur(0px)');
-                        $('.amazon .timer').hide();
-                        $('.amazon .answer').fadeOut();
-
-                        clearInterval(_self.timer);
-                        //self.scenePlay($('.amazon .bg'));
-                        self.scene.amazon.movie.play();
-                        $('.disc').hide();
-
-                        self.finished[0] = 1;
-                    }
-                }
-            },
-
-            countdown: {
-
-                totalTime: 20,
-                currentTime: 20,
-                timer: null,
-
-                start: function () {
-                    var _self = self.scene.amazon.countdown;
-
-                    $('.disc').show();
-
-                    _self.timer = setInterval(function () {
-                        if (_self.currentTime > 0) {
-                            _self.currentTime--;
-
-                            $('.amazon .timer span').text(_self.currentTime);
-                            $('.amazon .timer').css('background-position-x', $('.amazon .timer').width() * ((20 - _self.currentTime) / 20) * -1 + 'px')
-                            //$(".scene1 .bg").css('opacity', (70 / totalTime * (totalTime - currentTime)) / 100);
-                            //$(".scene1 .cover").css('opacity', (40 / totalTime * currentTime) / 100);   // 0 除，最后1秒完全不可见
-
-                            // 10px 模糊半径
-                            $(".amazon .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-                        }
-                        else {
-                            clearInterval(_self.timer);
-                            $(".amazon .bg").css('filter', 'blur(0px)');
-                            self.finished[0] = 1;
-
-                            $('.amazon .timer').hide();
-                            $('.amazon .answer').fadeOut();
-                            self.scene.amazon.movie.play();
-                            $('.disc').hide();
-                        }
-                    }, 1000)
-                }
             },
 
             movie: {
@@ -1046,6 +819,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 },
 
                 shark: function () {
+                    $('.amazon .bg .product').addClass('shake');
                     self.scene.amazon.movie.timer[0] = setInterval(function () {
                         $('.amazon .bg .product').addClass('shake');
 
@@ -1133,32 +907,11 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 self.slider.reset();
                 self.slideFlag = false;
 
-                self.scene.moon.countdown.start();
+                self.countdown.start({ scene: 3, rightAnswer: 0, callback: function () { self.scene.moon.movie.play(); } });
                 self.scene.moon.bindAction();
             },
 
             bindAction: function () {
-                var _self = self.scene.moon.countdown;
-                var target = $('.moon .answer img');
-
-                target.eq(1).hammer().on("tap", error);
-                target.eq(2).hammer().on("tap", error);
-
-                target.eq(0).hammer().on("tap", function (e) {
-                    console.log('回答正确');
-                    $(".moon .bg").css('filter', 'blur(0px)');
-                    //self.scenePlay($('.japan .bg'));
-                    self.scene.moon.movie.play();
-                    $('.disc').hide();
-
-                    clearInterval(_self.timer);
-                    $('.moon .timer').hide();
-                    $('.moon .answer').fadeOut();
-
-                    self.score += _self.currentTime;
-
-                    self.finished[0] = 1;
-                });
 
                 // 下个场景
                 $('.moon .product').hammer().on("tap", function (e) {
@@ -1173,74 +926,6 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                     }
                 });
 
-                //$('.moon-result img').hammer().on("tap", function (e) {
-
-                //    console.log('继续')
-                //    self.swiper.slideTo(8);
-                //    self.scene.egypt.open();
-
-                //});
-
-                function error() {
-                    _self.currentTime = self.punish(_self.currentTime);
-                    $('.moon .timer span').text(_self.currentTime);
-                    $(".moon .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-
-                    $('#scene .error').show();
-                    setTimeout(function () { $('#scene .error').fadeOut(); }, 1000);
-
-                    if (_self.currentTime == 0) {
-                        $(".moon .bg").css('filter', 'blur(0px)');
-                        $('.moon .timer').hide();
-                        $('.moon .answer').fadeOut();
-
-                        clearInterval(_self.timer);
-                        //self.scenePlay($('.moon .bg'));
-                        self.scene.moon.movie.play();
-                        $('.disc').hide();
-
-                        self.finished[0] = 1;
-                    }
-                }
-            },
-
-            countdown: {
-
-                totalTime: 20,
-                currentTime: 20,
-                timer: null,
-
-                start: function () {
-                    var _self = self.scene.moon.countdown;
-                    $('.disc').show();
-
-                    _self.timer = setInterval(function () {
-                        if (_self.currentTime > 0) {
-                            _self.currentTime--;
-
-                            $('.moon .timer span').text(_self.currentTime);
-                            $('.moon .timer').css('background-position-x', $('.moon .timer').width() * ((20 - _self.currentTime) / 20) * -1 + 'px')
-                            //$(".scene1 .bg").css('opacity', (70 / totalTime * (totalTime - currentTime)) / 100);
-                            //$(".scene1 .cover").css('opacity', (40 / totalTime * currentTime) / 100);   // 0 除，最后1秒完全不可见
-
-                            // 10px 模糊半径
-                            $(".moon .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-                        }
-                        else {
-                            clearInterval(_self.timer);
-                            $(".moon .bg").css('filter', 'blur(0px)');
-                            self.finished[0] = 1;
-
-                            $('.moon .timer').hide();
-                            $('.moon .answer').fadeOut();
-                            self.scene.moon.movie.play();
-                            $('.disc').hide();
-
-
-                            //self.scenePlay($('.moon .bg'));
-                        }
-                    }, 1000)
-                }
             },
 
             movie: {
@@ -1261,6 +946,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 },
 
                 shark: function () {
+                    $('.moon .bg .product').addClass('shake');
                     self.scene.moon.movie.timer[0] = setInterval(function () {
                         $('.moon .bg .product').addClass('shake');
 
@@ -1298,32 +984,11 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 self.slider.reset();
                 self.slideFlag = false;
 
-                self.scene.egypt.countdown.start();
+                self.countdown.start({ scene: 4, rightAnswer: 1, callback: function () { self.scene.egypt.movie.play(); } });
                 self.scene.egypt.bindAction();
             },
 
             bindAction: function () {
-                var _self = self.scene.egypt.countdown;
-                var target = $('.egypt .answer img');
-
-                target.eq(0).hammer().on("tap", error);
-                target.eq(2).hammer().on("tap", error);
-
-                target.eq(1).hammer().on("tap", function (e) {
-                    console.log('回答正确');
-                    $(".egypt .bg").css('filter', 'blur(0px)');
-                    //self.scenePlay($('.japan .bg'));
-                    self.scene.egypt.movie.play();
-                    $('.disc').hide();
-
-                    clearInterval(_self.timer);
-                    $('.egypt .timer').hide();
-                    $('.egypt .answer').fadeOut();
-
-                    self.score += _self.currentTime;
-
-                    self.finished[0] = 1;
-                });
 
                 // 下个场景
                 $('.egypt .product-press').hammer().on("tap", function (e) {
@@ -1337,75 +1002,8 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                         $('#slide-wrapper').show();
                     }
                 });
-
-                //$('.egypt-result img').hammer().on("tap", function (e) {
-
-                //    console.log('继续')
-                //    self.swiper.slideTo(10);
-                //    self.scene.singapore.open();
-
-                //});
-
-                function error() {
-                    _self.currentTime = self.punish(_self.currentTime);
-                    $('.egypt .timer span').text(_self.currentTime);
-                    $(".egypt .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-
-                    $('#scene .error').show();
-                    setTimeout(function () { $('#scene .error').fadeOut(); }, 1000);
-
-                    if (_self.currentTime == 0) {
-                        $(".egypt .bg").css('filter', 'blur(0px)');
-                        $('.egypt .timer').hide();
-                        $('.egypt .answer').fadeOut();
-
-                        clearInterval(_self.timer);
-                        //self.scenePlay($('.egypt .bg'));
-                        self.scene.egypt.movie.play();
-                        $('.disc').hide();
-
-                        self.finished[0] = 1;
-                    }
-                }
             },
 
-            countdown: {
-
-                totalTime: 20,
-                currentTime: 20,
-                timer: null,
-
-                start: function () {
-                    var _self = self.scene.egypt.countdown;
-                    $('.disc').show();
-
-                    _self.timer = setInterval(function () {
-                        if (_self.currentTime > 0) {
-                            _self.currentTime--;
-
-                            $('.egypt .timer span').text(_self.currentTime);
-                            $('.egypt .timer').css('background-position-x', $('.egypt .timer').width() * ((20 - _self.currentTime) / 20) * -1 + 'px')
-                            //$(".scene1 .bg").css('opacity', (70 / totalTime * (totalTime - currentTime)) / 100);
-                            //$(".scene1 .cover").css('opacity', (40 / totalTime * currentTime) / 100);   // 0 除，最后1秒完全不可见
-
-                            // 10px 模糊半径
-                            $(".egypt .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-                        }
-                        else {
-                            clearInterval(_self.timer);
-                            $(".egypt .bg").css('filter', 'blur(0px)');
-                            self.finished[0] = 1;
-
-                            $('.egypt .timer').hide();
-                            $('.egypt .answer').fadeOut();
-                            self.scene.egypt.movie.play();
-                            $('.disc').hide();
-
-                            //self.scenePlay($('.egypt .bg'));
-                        }
-                    }, 1000)
-                }
-            },
 
             movie: {
                 timer:[null, null],
@@ -1421,6 +1019,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 },
 
                 shark: function () {
+                    $('.egypt .bg .product').addClass('shake');
                     self.scene.egypt.movie.timer[0] = setInterval(function () {
                         $('.egypt .bg .product').addClass('shake');
 
@@ -1458,39 +1057,12 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 self.slider.reset();
                 self.slideFlag = false;
 
-                self.scene.singapore.countdown.start();
+                self.countdown.start({ scene: 5, rightAnswer: 2, callback: function () { self.scene.singapore.movie.play(); } });
                 self.scene.singapore.bindAction();
             },
 
             bindAction: function () {
-                var _self = self.scene.singapore.countdown;
-                var target = $('.singapore .answer img');
 
-                target.eq(0).hammer().on("tap", error);
-                target.eq(1).hammer().on("tap", error);
-
-                target.eq(2).hammer().on("tap", function (e) {
-                    console.log('回答正确');
-                    $(".singapore .bg").css('filter', 'blur(0px)');
-                    //self.scenePlay($('.japan .bg'));
-                    self.scene.singapore.movie.play();
-                    $('.disc').hide();
-
-                    clearInterval(_self.timer);
-                    $('.singapore .timer').hide();
-                    $('.singapore .answer').fadeOut();
-
-                    console.log('分数计算')
-
-                    self.score += _self.currentTime;
-
-                    console.log(self.score);
-
-                    $('.result .score span').text(120 - self.score);
-                    $('.result .rank span').text( (parseInt((self.score/120) * 20) + 80) + '%' );
-
-                    self.finished[0] = 1;
-                });
 
                 // 下个场景
                 $('.singapore .product').hammer().on("tap", function (e) {
@@ -1505,72 +1077,6 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                     }
                 });
 
-                //$('.singapore-result img').hammer().on("tap", function (e) {
-                //    if (self.finished[0]) {
-                //        self.swiper.slideTo(12);
-                //    }
-                //});
-
-                function error() {
-                    _self.currentTime = self.punish(_self.currentTime);
-                    $('.singapore .timer span').text(_self.currentTime);
-                    $(".singapore .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-
-                    $('#scene .error').show();
-                    setTimeout(function () { $('#scene .error').fadeOut(); }, 1000);
-
-                    if (_self.currentTime == 0) {
-                        $(".singapore .bg").css('filter', 'blur(0px)');
-                        $('.singapore .timer').hide();
-                        $('.singapore .answer').fadeOut();
-
-                        clearInterval(_self.timer);
-                        //self.scenePlay($('.singapore .bg'));
-                        self.scene.singapore.movie.play();
-                        $('.disc').hide();
-
-                        self.finished[0] = 1;
-                    }
-                }
-            },
-
-            countdown: {
-
-                totalTime: 20,
-                currentTime: 20,
-                timer: null,
-
-                start: function () {
-                    var _self = self.scene.singapore.countdown;
-
-                    $('.disc').show();
-
-                    _self.timer = setInterval(function () {
-                        if (_self.currentTime > 0) {
-                            _self.currentTime--;
-
-                            $('.singapore .timer span').text(_self.currentTime);
-                            $('.singapore .timer').css('background-position-x', $('.singapore .timer').width() * ((20 - _self.currentTime) / 20) * -1 + 'px')
-                            //$(".scene1 .bg").css('opacity', (70 / totalTime * (totalTime - currentTime)) / 100);
-                            //$(".scene1 .cover").css('opacity', (40 / totalTime * currentTime) / 100);   // 0 除，最后1秒完全不可见
-
-                            // 10px 模糊半径
-                            $(".singapore .bg").css('filter', 'blur(' + (10 / _self.totalTime * _self.currentTime) + 'px)');
-                        }
-                        else {
-                            clearInterval(_self.timer);
-                            $(".singapore .bg").css('filter', 'blur(0px)');
-                            self.finished[0] = 1;
-
-                            $('.singapore .timer').hide();
-                            $('.singapore .answer').fadeOut();
-                            self.scene.singapore.movie.play();
-                            $('.disc').hide();
-
-                            //self.scenePlay($('.singapore .bg'));
-                        }
-                    }, 1000)
-                }
             },
 
             movie: {
@@ -1589,6 +1095,7 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
                 },
 
                 shark: function () {
+                    $('.singapore .bg .product').addClass('shake');
                     self.scene.singapore.movie.timer[0] = setInterval(function () {
                         $('.singapore .bg .product').addClass('shake');
 
@@ -1654,13 +1161,6 @@ define(['jquery', 'weixin', 'swiper', 'frameplayer', 'createjs'], function ($, w
         },
     }
 
-    self.punishment = 3;
-    self.punish = function (num) {
-        num -= self.punishment;
-        if (num < 0) { num = 0; }
-
-        return num;
-    }
     self.swiper = null;
 
     // 记录场景是否完成

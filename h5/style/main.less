@@ -163,135 +163,177 @@ html, body {
             width:80vw;
         }
     }
-
-    /*.percent {
-        position:absolute;
-        top:40vh;
-        width:100%;
-
-        text-align:center;
-        margin-top:30px;
-    }*/
 }
+
+
 
 // ------------------------------------swiper里统一样式-----------------------------------------
 
 .swiper-container {
     height:100%;
 
-    .answer {
-        position:absolute;
-        width:100%;
-        height:10vh;
-        bottom:10vh;
-        text-align:center;
-
-        img {
-            width:30%;
-            margin:0 1vw;
-        }
-    }
-
-    .timer {
-        position:absolute;
-        width:90vw;
-        height:24px;
-        top:5vh;
-        left:5vw;
-        text-align:right;
-        padding-right:10px;
-
-        border:2px solid #028135;
-        border-radius: 12px;
-        //color:aliceblue;
-        //font-size:16vw;
-        color:#f2f489;
-
-        background-color:#028135;
-        background-image:url(../img/scene/timeline.jpg);
-        background-size:100% 100%;
-        background-repeat:no-repeat;
-
-        font-size:12px;
-        line-height:18px;
-    }
-
-    .disc {
-        position:absolute;
-        z-index:10;
-        left:0;
-        bottom:25vh;
-        width:100%;
-        height:20vh;
-        display:none;
-        //background-color:antiquewhite;
-
-        .main {
-            .percent-box();
-            position:relative;
-
-            .body {
-                .percent-box();
-                //background-color:blue;
-                
-                position:absolute;
-                text-align:center;
-
-                img {
-                    height:100%;
-                    
-                }
-
-                .circle {
-                    animation: myrotate 5s linear 0s infinite normal;
-                }
-
-                .finger {
-                    position:absolute;
-                    left:55vw;
-                    top:-1vh;
-
-                }
-            }
-
-            .left {
-                .percent-box(50%, 100%);
-
-                float:left;
-                //background-color:antiquewhite;
-                background-image:url(../img/scene/voice-left.png);
-                background-repeat:repeat-x;
-                background-position:100% center;
-            }
-
-            .right {
-                .percent-box(50%, 100%);
-
-                float:right;
-                background-image:url(../img/scene/voice-right.png);
-                background-repeat:repeat-x;
-                background-position:0 center;
-            }
-        }
-    }
-
-    .error {
-        position:absolute;
-        width:171px;
-        height:151px;
-        top:350px;
-        left:220px;
-        background-image:url(../img/scene/error.png);
-        background-size:contain;
-        background-repeat:no-repeat;
-        z-index:10;
-        display:none;
-    }
 
     .shake {
         animation: shake 200ms ease infinite alternate;
     }
 }
+
+// ------------------------------------swiper里统一样式-----------------------------------------
+
+.box-wrapper {
+    .percent-box();
+
+    position:absolute;
+    z-index:99999;
+    top:0;
+    left:0;
+
+    display:none;
+
+    // 倒计时
+    .countdown {
+        .percent-box();
+        position:relative;
+        display:none;
+
+        background-image:url(../img/loading/bg.jpg);
+
+        .timer {
+            position:absolute;
+            width:90vw;
+            height:24px;
+            top:5vh;
+            left:5vw;
+            text-align:right;
+            padding-right:10px;
+
+            border:2px solid #028135;
+            border-radius: 12px;
+            color:#f2f489;
+
+            background-color:#028135;
+            background-image:url(../img/countdown/timeline.jpg);
+            background-size:100% 100%;
+            background-repeat:no-repeat;
+
+            font-size:12px;
+            line-height:18px;
+
+            &:after {
+                content:'s';
+            }
+        }
+
+        .error {
+            position:absolute;
+            width:100%;
+            height:8vh;
+            left:0;
+            top:22vh;
+            background-image:url(../img/countdown/3.png);
+            background-size:contain;
+            background-repeat:no-repeat;
+            background-position:center;
+            display:none;
+        }
+
+        .animation {
+            position:absolute;
+            width:100%;
+            height:30vh;
+            left:0;
+            bottom:35vh;
+
+            .disc {
+                width:100%;
+                height:100%;
+                text-align:center;
+
+                img {
+                    height:100%;
+                }
+
+                .circle {
+                    animation: rotate 5s linear 0s infinite normal;
+                }
+
+                .finger {
+                    position:absolute;
+                    left:65vw;
+                    top:2vh;
+                    height:70%;
+                }
+            }
+
+            .wave(@img, @keyframes, @start){
+                .percent-box(50vw, 100%);
+
+                position:absolute;
+                background-image:url('../img/countdown/@{img}');
+                //background-size:initial 100%;
+                background-repeat:repeat-x;
+                background-position:@start center;
+
+                animation: @keyframes 6s linear 0s infinite normal;
+            }
+
+            .left {
+                .wave('voice-left.png', wave-left, 100%);
+                left:0;
+            }
+
+            .right {
+                .wave('voice-right.png', wave-right, 0);
+                right:0;
+            }
+        }
+
+        .answer {
+            position:absolute;
+            width:100%;
+            height:10vh;
+            bottom:10vh;
+            text-align:center;
+
+            img {
+                width:30%;
+                margin:0 1vw;
+            }
+        }
+
+        .tips {
+            .percent-box();
+
+            position:absolute;
+            left:0;
+            top:0;
+
+            background-color:rgba(0,0,0,0.9);
+            background-image:url(../img/countdown/tips.png);
+            background-repeat:no-repeat;
+            background-size:cover;
+        }
+
+    }
+
+    // 分享提示
+    .share2 {
+        .percent-box();
+
+        position:absolute;
+        left:0;
+        top:0;
+        display:none;
+
+        background-color:rgba(0,0,0,0.9);
+        background-image:url(../img/scene/share.png);
+        background-repeat:no-repeat;
+        background-size:80%;
+        background-position:80% 3vh;
+    }
+}
+
+
 
 // ------------------------------------机场-----------------------------------------
 
@@ -345,27 +387,36 @@ html, body {
     }
 }
 
+
+// ------------------------------------场景-----------------------------------------
+
+#scene {
+    .bg {
+        .percent-box();
+
+        position:absolute;
+        background-repeat: no-repeat;        
+        background-size:cover;
+        opacity: 1;
+    }
+
+    .clickme {
+        position:absolute;
+        background-image:url(../img/scene/clickme.png);
+        background-repeat: no-repeat;        
+        background-size:cover;
+        width:124px;
+        height:74px;
+    }
+}
+
+
 // ------------------------------------日本-----------------------------------------
 
 .japan {
 
-    .bg-shadow {
-        position:absolute;
-        .percent-box();
-        background-repeat: no-repeat;
-        background-image:url(../img/japan/bg.jpg);
-        background-size:cover;
-    }
-
     .bg {
-        position:absolute;
-        .percent-box();
-
-        background-repeat: no-repeat;
         background-image:url(../img/japan/bg.jpg);
-        background-size:cover;
-        opacity: 1;
-        filter:blur(10px);
     }
 
     .flower {
@@ -380,18 +431,6 @@ html, body {
         left:70px;
     }
 
-    .ready {
-        width:100%;
-        bottom:10vh;
-        left:0;
-        position:absolute;
-        text-align:center;
-
-        img {
-            width:90vw;
-        }
-    }
-
     .product {
         position:absolute;
         width:48px;
@@ -402,6 +441,11 @@ html, body {
         left:380px;
         top:680px;
     }
+
+    .clickme {
+        left:340px;
+        top:600px;
+    }
 }
 
 .japan-result {
@@ -410,26 +454,286 @@ html, body {
     background-repeat:no-repeat;
 }
 
+// ------------------------------------日内瓦-----------------------------------------
+
+.geneva {
+
+    .bg {
+        background-image:url(../img/geneva/bg.jpg);
+    }
+
+    .swan {
+        position:absolute;
+        width:189px;
+        height:118px;
+        transform-origin: 0px 0px 0px;
+        background-image:url(../img/geneva/swan.png);
+        background-size:contain;
+        background-size:300%;
+        bottom:60px;
+        left:150px;
+    }
+
+    .boat {
+        position:absolute;
+        width:1156px;
+        height:229px;
+        background-image:url(../img/geneva/boat.png);
+        background-size:200%;
+        top:650px;
+        left:-800px;
+    }
+
+    .skiing {
+        position:absolute;
+        width:739px;
+        height:402px;
+        background-image:url(../img/geneva/skiing.png);
+        background-size:400%;
+        top:340px;
+        left:6px;
+    }
+
+    .product {
+        position:absolute;
+        width:150px;
+        height:170px;
+        background-image:url(../img/geneva/product.png);
+        background-size:contain;
+        left:410px;
+        top:790px;
+    }
+
+    .clickme {
+        left:410px;
+        top:710px;
+    }
+}
+
+.geneva-result {
+    background-image:url(../img/geneva/main.jpg);
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+
+
+// ------------------------------------亚马逊-----------------------------------------
+
+.amazon {
+
+    .bg {
+        background-image:url(../img/amazon/bg.jpg);
+    }
+
+    .tree {
+        position:absolute;
+        width:640px;
+        height:1136px;
+        background-image:url(../img/amazon/tree.png);
+        background-size:cover;
+        top:0px;
+        left:0px;
+    }
+
+    .water {
+        position:absolute;
+        width:856px;
+        height:251px;
+        background-image:url(../img/amazon/water.png);
+        background-size:cover;
+        top:800px;
+        left:-110px;
+    }
+
+    .boat {
+        position:absolute;
+        width:640px;
+        height:1136px;
+        background-image:url(../img/amazon/boat.png);
+        background-size:cover;
+        top:0px;
+        left:0px;
+    }
+
+    .monkey {
+        position:absolute;
+        width:446px;
+        height:504px;
+        background-image:url(../img/amazon/monkey.png);
+        background-size:100%;
+        background-repeat:no-repeat;
+        top:55px;
+        left:-10px;
+    }
+
+    .bird1 {
+        position:absolute;
+        width:379px;
+        height:374px;
+        background-image:url(../img/amazon/bird1.png);
+        background-size:100%;
+        background-repeat:no-repeat;
+        top:205px;
+        left:342px;
+    }
+
+    .bird2 {
+        position:absolute;
+        width:120px;
+        height:98px;
+        background-image:url(../img/amazon/bird2.png);
+        background-size:100%;
+        background-repeat:no-repeat;
+        top:655px;
+        left:-100px;
+    }
+
+    .product {
+        position:absolute;
+        width:232px;
+        height:236px;
+        background-image:url(../img/amazon/product.png);
+        background-size:contain;
+        left:400px;
+        top:640px;
+    }
+
+    .clickme {
+        left:440px;
+        top:560px;
+    }
+}
+
+.amazon-result {
+    background-image:url(../img/amazon/main.jpg);
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+
+// ------------------------------------月球-----------------------------------------
+
+.moon {
+
+    .bg {
+        background-image:url(../img/moon/bg.jpg);
+    }
+
+    .earth {
+        position:absolute;
+        width:289px;
+        height:290px;
+        transform-origin: 0px 0px 0px;
+        background-image:url(../img/moon/earth.png);
+        background-size:contain;
+        background-size:600%;
+        top:120px;
+        left:50px;
+    }
+
+    .man {
+        position:absolute;
+        width:246px;
+        height:354px;
+        background-image:url(../img/moon/man.png);
+        background-size:contain;
+        left:90px;
+        top:620px;
+    }
+
+    .product {
+        position:absolute;
+        width:113px;
+        height:175px;
+        background-image:url(../img/moon/product.png);
+        background-size:contain;
+        left:337px;
+        top:770px;
+    }
+
+    .clickme {
+        left:310px;
+        top:690px;
+    }
+}
+
+.moon-result {
+    background-image:url(../img/moon/main.jpg);
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+
+// ------------------------------------埃及-----------------------------------------
+
+.egypt {
+    .bg {
+        background-image:url(../img/egypt/bg.png);
+    }
+
+    .fg {
+        position:absolute;
+        width:640px;
+        height:1136px;
+        background-repeat: no-repeat;
+        background-image:url(../img/egypt/fg.png);
+        background-size:contain;
+    }
+
+    .grass {
+        position:absolute;
+        width:640px;
+        height:1136px;
+        background-repeat: no-repeat;
+        background-image:url(../img/egypt/grass.png);
+        background-size:contain;
+    }
+
+    .camel {
+        position:absolute;
+        width:1238px;
+        height:300px;
+        transform-origin: 0px 0px 0px;
+        background-image:url(../img/egypt/camel.png);
+        background-size:contain;
+        background-size:600%;
+        top:540px;
+        left:-210px;
+    }
+
+    .product {
+        position:absolute;
+        width:184px;
+        height:153px;
+        background-image:url(../img/egypt/product.png);
+        background-size:contain;
+        left:280px;
+        top:860px;
+    }
+
+    .product-press {
+        position:absolute;
+        width:184px;
+        height:153px;
+        left:280px;
+        top:860px;
+    }
+
+    .clickme {
+        left:290px;
+        top:780px;
+    }
+}
+
+.egypt-result {
+    background-image:url(../img/egypt/main.jpg);
+    background-size:cover;
+    background-repeat:no-repeat;
+}
+
 // ------------------------------------新加坡-----------------------------------------
 
 .singapore {
-    .bg-shadow {
-        position:absolute;
-        .percent-box();
-        background-repeat: no-repeat;
-        background-image:url(../img/singapore/bg.jpg);
-        background-size:cover;
-    }
-
     .bg {
-        position:absolute;
-        .percent-box();
-
-        background-repeat: no-repeat;
         background-image:url(../img/singapore/bg.jpg);
-        background-size:cover;
-        opacity: 1;
-        filter:blur(10px);
     }
 
     .balloon1 {
@@ -508,312 +812,15 @@ html, body {
         left:200px;
         top:800px;
     }
+
+    .clickme {
+        left:240px;
+        top:720px;
+    }
 }
 
 .singapore-result {
     background-image:url(../img/singapore/main.jpg);
-    background-size:cover;
-    background-repeat:no-repeat;
-}
-
-
-// ------------------------------------亚马逊-----------------------------------------
-
-.amazon {
-    .bg-shadow {
-        position:absolute;
-        .percent-box();
-        background-repeat: no-repeat;
-        background-image:url(../img/amazon/bg.jpg);
-        background-size:cover;
-    }
-
-    .bg {
-        position:absolute;
-        .percent-box();
-
-        background-repeat: no-repeat;
-        background-image:url(../img/amazon/bg.jpg);
-        background-size:cover;
-        opacity: 1;
-        filter:blur(10px);
-    }
-
-    .water {
-        position:absolute;
-        width:856px;
-        height:251px;
-        background-image:url(../img/amazon/water.png);
-        background-size:cover;
-        top:800px;
-        left:-110px;
-    }
-
-    .boat {
-        position:absolute;
-        width:640px;
-        height:1136px;
-        background-image:url(../img/amazon/boat.png);
-        background-size:cover;
-        top:0px;
-        left:0px;
-    }
-
-    .monkey {
-        position:absolute;
-        width:446px;
-        height:505px;
-        background-image:url(../img/amazon/monkey.png);
-        background-size:100%;
-        background-repeat:no-repeat;
-        top:55px;
-        left:0px;
-    }
-
-    .bird1 {
-        position:absolute;
-        width:379px;
-        height:374px;
-        background-image:url(../img/amazon/bird1.png);
-        background-size:100%;
-        background-repeat:no-repeat;
-        top:205px;
-        left:342px;
-    }
-
-    .bird2 {
-        position:absolute;
-        width:120px;
-        height:98px;
-        background-image:url(../img/amazon/bird2.png);
-        background-size:100%;
-        background-repeat:no-repeat;
-        top:655px;
-        left:-100px;
-    }
-
-    .product {
-        position:absolute;
-        width:232px;
-        height:236px;
-        background-image:url(../img/amazon/product.png);
-        background-size:contain;
-        left:400px;
-        top:640px;
-    }
-}
-
-.amazon-result {
-    background-image:url(../img/amazon/main.jpg);
-    background-size:cover;
-    background-repeat:no-repeat;
-}
-
-// ------------------------------------日内瓦-----------------------------------------
-
-.geneva {
-    .bg-shadow {
-        position:absolute;
-        .percent-box();
-        background-repeat: no-repeat;
-        background-image:url(../img/geneva/bg.jpg);
-        background-size:cover;
-    }
-
-    .bg {
-        position:absolute;
-        .percent-box();
-
-        background-repeat: no-repeat;
-        background-image:url(../img/geneva/bg.jpg);
-        background-size:cover;
-        opacity: 1;
-        filter:blur(10px);
-    }
-
-    .swan {
-        position:absolute;
-        width:189px;
-        height:118px;
-        transform-origin: 0px 0px 0px;
-        background-image:url(../img/geneva/swan.png);
-        background-size:contain;
-        background-size:300%;
-        bottom:60px;
-        left:150px;
-    }
-
-    .boat {
-        position:absolute;
-        width:1156px;
-        height:229px;
-        background-image:url(../img/geneva/boat.png);
-        background-size:200%;
-        top:650px;
-        left:-800px;
-    }
-
-    .skiing {
-        position:absolute;
-        width:739px;
-        height:402px;
-        background-image:url(../img/geneva/skiing.png);
-        background-size:400%;
-        top:340px;
-        left:6px;
-    }
-
-    .product {
-        position:absolute;
-        width:150px;
-        height:170px;
-        background-image:url(../img/geneva/product.png);
-        background-size:contain;
-        left:410px;
-        top:790px;
-    }
-}
-
-.geneva-result {
-    background-image:url(../img/geneva/main.jpg);
-    background-size:cover;
-    background-repeat:no-repeat;
-}
-
-// ------------------------------------月球-----------------------------------------
-
-.moon {
-    .bg-shadow {
-        position:absolute;
-        .percent-box();
-        background-repeat: no-repeat;
-        background-image:url(../img/moon/bg.jpg);
-        background-size:cover;
-    }
-
-    .bg {
-        position:absolute;
-        .percent-box();
-
-        background-repeat: no-repeat;
-        background-image:url(../img/moon/bg.jpg);
-        background-size:cover;
-        opacity: 1;
-        filter:blur(10px);
-    }
-
-    .earth {
-        position:absolute;
-        width:289px;
-        height:290px;
-        transform-origin: 0px 0px 0px;
-        background-image:url(../img/moon/earth.png);
-        background-size:contain;
-        background-size:600%;
-        top:120px;
-        left:50px;
-    }
-
-    .man {
-        position:absolute;
-        width:246px;
-        height:354px;
-        background-image:url(../img/moon/man.png);
-        background-size:contain;
-        left:90px;
-        top:620px;
-    }
-
-    .product {
-        position:absolute;
-        width:113px;
-        height:175px;
-        background-image:url(../img/moon/product.png);
-        background-size:contain;
-        left:337px;
-        top:770px;
-    }
-}
-
-.moon-result {
-    background-image:url(../img/moon/main.jpg);
-    background-size:cover;
-    background-repeat:no-repeat;
-}
-
-// ------------------------------------埃及-----------------------------------------
-
-.egypt {
-    .bg-shadow {
-        position:absolute;
-        .percent-box();
-        background-repeat: no-repeat;
-        background-image:url(../img/egypt/bg2.jpg);
-        background-size:cover;
-    }
-
-    .bg {
-        position:absolute;
-        .percent-box();
-
-        background-repeat: no-repeat;
-        background-image:url(../img/egypt/bg.png);
-        background-size:cover;
-        opacity: 1;
-        filter:blur(10px);
-    }
-
-    .fg {
-        position:absolute;
-        width:640px;
-        height:1136px;
-        background-repeat: no-repeat;
-        background-image:url(../img/egypt/fg.png);
-        background-size:contain;
-    }
-
-    .grass {
-        position:absolute;
-        width:640px;
-        height:1136px;
-        background-repeat: no-repeat;
-        background-image:url(../img/egypt/grass.png);
-        background-size:contain;
-    }
-
-    .camel {
-        position:absolute;
-        width:1238px;
-        height:300px;
-        transform-origin: 0px 0px 0px;
-        background-image:url(../img/egypt/camel.png);
-        background-size:contain;
-        background-size:600%;
-        top:540px;
-        left:-210px;
-    }
-
-    .product {
-        position:absolute;
-        width:184px;
-        height:153px;
-        background-image:url(../img/egypt/product.png);
-        background-size:contain;
-        left:280px;
-        top:860px;
-    }
-
-    .product-press {
-        position:absolute;
-        width:184px;
-        height:153px;
-        left:280px;
-        top:860px;
-    }
-}
-
-.egypt-result {
-    background-image:url(../img/egypt/main.jpg);
     background-size:cover;
     background-repeat:no-repeat;
 }
@@ -837,35 +844,26 @@ html, body {
     background-repeat:no-repeat;
 
     .score {
-        margin-top:10vh;
-        font-size:80px;
+        margin-top:11vh;
+        font-size:10vh;
         text-align:center;
         color:#6f430f;
 
         sub {
-            font-size:30px;
+            font-size:6vh;
             vertical-align:baseline;
         }
     }
 
     .rank {
         margin-top:-2vh;
-        font-size:18px;
+        font-size:3vh;
         text-align:center;
         color:#6f430f;
 
         span {
-            font-size:20px;
+            font-size:4vh;
             margin:0 5px;
-        }
-    }
-
-    .description {
-        margin-top:7vh;
-        text-align:center;
-
-        img {
-            width:60vw;
         }
     }
 
@@ -972,10 +970,17 @@ html, body {
   animation: bounce-down 1.3s linear infinite;
 }
 
-@keyframes myrotate {
+@keyframes rotate {
     0% { transform:rotate(0deg);}
-    25% {transform:rotate(-90deg);}	
-    50% { transform:rotate(-180deg);}
-    75% { transform:rotate(-270deg);}
     100% { transform:rotate(-360deg);}
+}
+
+@keyframes wave-left {
+    0% { background-position-x:100%; }
+    100% { background-position-x:-100%;}
+}
+
+@keyframes wave-right {
+    0% { background-position-x:0; }
+    100% { background-position-x:200%;}
 }
